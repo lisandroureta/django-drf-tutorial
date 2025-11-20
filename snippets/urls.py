@@ -1,13 +1,17 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from snippets import views
+from snippets import views as snippet_views
+from accounts import views as account_views
+from comments import views as comment_views
 
-# Crea un router y registra nuestros viewsets
 router = DefaultRouter()
-router.register(r'snippets', views.SnippetViewSet, basename='snippet')
-router.register(r'users', views.UserViewSet, basename='user')
+# Registramos los snippets
+router.register(r'snippets', snippet_views.SnippetViewSet, basename='snippet')
+# Registramos los usuarios
+router.register(r'users', account_views.UserViewSet, basename='user')
+# Registramos los comentarios
+router.register(r'comments', comment_views.CommentViewSet, basename='comment')
 
-# Las URLs de la API ahora son determinadas automáticamente por el router.
 urlpatterns = [
     path('', include(router.urls)),
 ]

@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-
 # Importamos las vistas de JWT
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+# Importamos la nueva vista de registro
+from accounts.views import RegisterView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('', include('snippets.urls')),
 
     # --- RUTAS DE JWT ---
+    path('api/register/', RegisterView.as_view(), name='auth_register'),
     # Para pedir el token inicial (Login)
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # Para refrescar el token cuando caduca (seguridad)
