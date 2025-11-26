@@ -1,7 +1,6 @@
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
-# 1. Importamos estas librerías para el resaltado de sintaxis
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
@@ -17,16 +16,13 @@ class Snippet(models.Model):
     linenos = models.BooleanField(default=False)
     language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
     style = models.CharField(choices=STYLE_CHOICES, default='friendly', max_length=100)
-    
-    # 2. Campo nuevo: El dueño del snippet
     owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
-    # 3. Campo nuevo: El código ya coloreado en HTML
     highlighted = models.TextField()
+    likes = models.ManyToManyField('auth.User', related_name='liked_snippets', blank=True)
 
     class Meta:
         ordering = ['created']
 
-    # 4. Sobrescribimos el método save() para generar el HTML automáticamente
     def save(self, *args, **kwargs):
         """
         Usa la librería `pygments` para crear una representación HTML coloreada del código.

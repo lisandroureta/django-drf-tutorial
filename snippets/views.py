@@ -25,5 +25,19 @@ class SnippetViewSet(viewsets.ModelViewSet):
         snippet = self.get_object()
         return Response(snippet.highlighted)
 
+    # --- NUEVA ACCIÓN: LIKE ---
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def like(self, request, pk=None):
+        snippet = self.get_object() # Obtenemos el snippet por ID (pk)
+        user = request.user
+        
+        # Verificamos si el usuario ya está en la lista de likes
+        if user in snippet.likes.all():
+            snippet.likes.remove(user) # Lo quitamos
+            return Response({'status': 'unliked'}, status=status.HTTP_200_OK)
+        else:
+            snippet.likes.add(user) # Lo agregamos
+            return Response({'status': 'liked'}, status=status.HTTP_200_OK)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
