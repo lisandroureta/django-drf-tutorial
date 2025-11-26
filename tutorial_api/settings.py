@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -141,16 +142,22 @@ REST_FRAMEWORK = {
     ),
 }
 
-# Configuración de la documentación (Título, versión, descripción)
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Snippets API',
     'DESCRIPTION': 'Mi primera API con Django REST Framework',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     
-    # --- ESTO PARA QUE APAREZCA EL BOTÓN DE LOGIN JWT EN SWAGGER ---
+    # Configuración de UI
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True, # Esto ayuda a que no se borre el token al recargar
+        'displayOperationId': True,
+    },
+    
+    # Definición Manual de Seguridad (Esto obliga a Swagger a mostrar el candado)
     'COMPONENT_SPLIT_REQUEST': True,
-    'security': [{'Bearer': []}],
+    'SECURITY': [{'Bearer': []}], # <--- Nota que usamos mayúsculas aquí a veces ayuda
     'APPEND_COMPONENTS': {
         'securitySchemes': {
             'Bearer': {
@@ -160,4 +167,9 @@ SPECTACULAR_SETTINGS = {
             }
         }
     }
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',), # <--- Confirmamos que la palabra clave es 'Bearer'
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), # Que dure 1 hora para que no se te venza rápido probando
 }
